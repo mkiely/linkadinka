@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sample Link Document</title>
+</head>
+<body>
+
+<h1>Example Store — Sample Links</h1>
+
+<p>
+  Welcome to our sample document. Below you will find a variety of links
+  that exercise different URL patterns used in our link scanner prototype.
+</p>
+
+<!-- ── Plain links ── -->
+<h2>Standard Links</h2>
+<ul>
+  <li><a href="https://www.example.com">Home Page</a></li>
+  <li><a href="https://www.example.com/about">About Us</a></li>
+  <li><a href="https://www.example.com/products/shoes">Shoes Category</a></li>
+  <li><a href="https://www.example.com/products/accessories/bags">Bags Category</a></li>
+  <li><a href="https://shop.example.com/sale">Sale — Shop Subdomain</a></li>
+</ul>
+
+<!-- ── Links with query params ── -->
+<h2>Links with Query Parameters</h2>
+<ul>
+  <li><a href="https://www.example.com/search?q=boots">Search: boots</a></li>
+  <li><a href="https://www.example.com/filter?cat=shoes&amp;size=10">Filter: shoes size 10</a></li>
+  <li><a href="https://www.example.com/results?page=2&amp;sort=price_asc">Results page 2, sorted</a></li>
+  <li><a href="https://www.example.com/product/42?ref=homepage&amp;utm_source=email">Product with tracking params</a></li>
+</ul>
+
+<!-- ── Links with handlebars in query params ── -->
+<h2>Links with Handlebars Query Params</h2>
+<ul>
+  <li><a href="https://www.example.com/search?q={{searchTerm}}">Dynamic search</a></li>
+  <li><a href="https://www.example.com/track?order={{orderId}}&amp;user={{userId}}">Order tracking</a></li>
+  <li><a href="https://www.example.com/api/products?key={{apiKey}}&amp;env={{environment}}&amp;version=2">API with auth + env</a></li>
+  <li><a href="https://www.example.com/promo?code={{promoCode}}&amp;campaign=summer">Promo code link</a></li>
+</ul>
+
+<!-- ── Links with handlebars in path ── -->
+<h2>Links with Handlebars Path Segments</h2>
+<ul>
+  <li><a href="https://www.example.com/user/{{userId}}/profile">User profile</a></li>
+  <li><a href="https://www.example.com/store/{{storeId}}/inventory">Store inventory</a></li>
+  <li><a href="https://www.example.com/{{locale}}/checkout?cart={{cartId}}">Locale-aware checkout</a></li>
+</ul>
+
+<!-- ── Entire URL as handlebars ── -->
+<h2>Fully Dynamic Links</h2>
+<ul>
+  <li><a href="{{myUrl}}">Fully dynamic — entire URL is a template variable</a></li>
+  <li><a href="{{redirectTarget}}">Redirect target</a></li>
+</ul>
+
+<footer>
+  <p>
+    Visit our partner site at
+    <a href="https://partner.example.org/landing?src=sample&amp;id={{partnerId}}">partner page</a>
+    or our
+    <a href="https://www.example.com/docs/api-reference">API docs</a>.
+  </p>
+</footer>
+
+</body>
+</html>
