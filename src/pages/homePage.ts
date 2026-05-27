@@ -68,9 +68,9 @@ function buildHomeHtml(allLinks: FoundLink[]): string {
         </div>
         <p class="section-hint">
           Links scanned from
-          <a href="/samples/sample.html" target="_blank" rel="noopener">sample.html</a>
+          <a href="${import.meta.env.BASE_URL}samples/sample.html" target="_blank" rel="noopener">sample.html</a>
           and
-          <a href="/samples/sample.txt" target="_blank" rel="noopener">sample.txt</a>.
+          <a href="${import.meta.env.BASE_URL}samples/sample.txt" target="_blank" rel="noopener">sample.txt</a>.
           Select one or more, then click <strong>Create Overrides</strong>.
         </p>
 

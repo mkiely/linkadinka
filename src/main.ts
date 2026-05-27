@@ -14,9 +14,10 @@ async function boot(): Promise<void> {
   app.innerHTML = '<p class="loading">⏳ Loading sample files…</p>';
 
   try {
+    const base = import.meta.env.BASE_URL;
     const [htmlRes, txtRes] = await Promise.all([
-      fetch('/samples/sample.html'),
-      fetch('/samples/sample.txt'),
+      fetch(`${base}samples/sample.html`),
+      fetch(`${base}samples/sample.txt`),
     ]);
 
     if (!htmlRes.ok || !txtRes.ok) {
