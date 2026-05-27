@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/linkaDinka/',
+  base: '/linkadinka/',
   server: {
     open: true,
   },
