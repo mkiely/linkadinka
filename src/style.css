@@ -69,7 +69,7 @@ body { min-height: 100vh; }
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 48px;
 }
 
 /* ── Card ─────────────────────────────────────────────────────────────────── */
@@ -79,6 +79,7 @@ body { min-height: 100vh; }
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-card);
+  margin-bottom: 10px;
 }
 .card-header {
   display: flex;
@@ -87,6 +88,7 @@ body { min-height: 100vh; }
   margin-bottom: 8px;
 }
 .card-header h2 { font-size: 16px; font-weight: 600; }
+.btn-create-overrides { margin-left: auto; }
 
 h2 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
 h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
@@ -360,8 +362,198 @@ pre  { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 12
 details summary { cursor: pointer; font-size: 12px; color: var(--color-text-muted); margin-top: 8px; }
 
 @media (max-width: 600px) {
-  #app { padding: 12px; gap: 12px; }
+  #app { padding: 12px; gap: 28px; }
   .modal-card { max-height: 98vh; }
   .modal-body { padding: 14px 16px; }
   .modal-header, .modal-footer { padding: 12px 16px; }
 }
+
+/* ── Hash Chips ──────────────────────────────────────────────────────────── */
+.hash-chip {
+  display: inline-block;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  color: #334155;
+}
+.hash-chip--sm { font-size: 10px; padding: 1px 5px; }
+
+/* ── Override Type Badges ────────────────────────────────────────────────── */
+.badge-wildcard { background: #fce7f3; color: #9d174d; }
+.badge-exact    { background: #d1fae5; color: #065f46; }
+
+/* ── Hash Cell in Overrides Table ────────────────────────────────────────── */
+.hash-cell { white-space: nowrap; display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+
+/* ── Trace Header ────────────────────────────────────────────────────────── */
+.trace-header {
+  background: #f8f9fb;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.trace-url-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.trace-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--color-text-muted);
+  min-width: 64px;
+}
+.trace-url {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--color-primary);
+  word-break: break-all;
+}
+.trace-hint { font-size: 11px; color: var(--color-text-muted); font-style: italic; }
+
+/* ── Evaluation Cards ────────────────────────────────────────────────────── */
+.eval-cards { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+
+.eval-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.eval-card--match  { border-color: #6ee7b7; }
+.eval-card--no-match { border-color: var(--color-border); }
+
+.eval-card-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8f9fb;
+  border-bottom: 1px solid var(--color-border);
+}
+.eval-card--match .eval-card-header  { background: #f0fdf4; border-color: #6ee7b7; }
+.eval-card--no-match .eval-card-header { background: #f8f9fb; }
+
+.eval-result-icon { font-size: 14px; font-weight: 700; }
+.eval-card--match  .eval-result-icon { color: var(--color-success); }
+.eval-card--no-match .eval-result-icon { color: var(--color-text-muted); }
+
+.eval-pattern { font-size: 12px; color: var(--color-text); flex: 1; min-width: 0; word-break: break-all; }
+
+.eval-result-label { font-size: 11px; font-weight: 700; letter-spacing: .04em; margin-left: auto; }
+.result-match    { color: var(--color-success); }
+.result-no-match { color: var(--color-text-muted); }
+
+/* Evaluation path badges */
+.badge-hash-path    { background: #dbeafe; color: #1d4ed8; }
+.badge-pattern-path { background: #fef3c7; color: #92400e; }
+.badge-mismatch     { background: #fee2e2; color: #991b1b; }
+
+/* ── Steps Table ─────────────────────────────────────────────────────────── */
+.steps-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.steps-table th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--color-text-muted);
+  padding: 6px 12px;
+  background: #fafbfc;
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
+}
+.steps-table td {
+  padding: 6px 12px;
+  border-bottom: 1px solid #f0f2f5;
+  vertical-align: middle;
+}
+.steps-table tr:last-child td { border-bottom: none; }
+
+.step-icon { width: 24px; text-align: center; font-weight: 700; }
+.step-match    .step-icon { color: var(--color-success); }
+.step-no-match .step-icon { color: var(--color-danger); }
+.step-skip     .step-icon { color: var(--color-text-muted); }
+.step-info     .step-icon { color: var(--color-primary); }
+
+.step-match    { background: #f0fdf4; }
+.step-no-match { background: #fff5f5; }
+.step-skip     { background: #fafbfc; opacity: .7; }
+.step-info     { background: #eff6ff; }
+
+.step-label  { font-weight: 500; white-space: nowrap; }
+.step-detail code { font-size: 11px; color: var(--color-text-muted); word-break: break-all; }
+.step-dur    { text-align: right; white-space: nowrap; color: var(--color-text-muted); font-family: 'SF Mono', monospace; font-size: 11px; }
+.step-ops    { text-align: right; white-space: nowrap; color: var(--color-text-muted); font-size: 11px; }
+
+.step-total td {
+  font-weight: 600;
+  background: #f8f9fb;
+  border-top: 1px solid var(--color-border);
+  font-size: 12px;
+}
+.step-total .step-dur, .step-total .step-ops { color: var(--color-text); }
+
+/* ── Trace Summary Bar ───────────────────────────────────────────────────── */
+.trace-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  overflow: hidden;
+}
+.trace-summary strong { color: var(--color-text); }
+.sep { color: var(--color-border-hover); }
+
+.trace-summary-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  padding: 8px 14px;
+}
+.trace-summary-row + .trace-summary-row {
+  border-top: 1px solid var(--color-border);
+}
+
+.trace-summary-full { background: #f8f9fb; }
+
+/* Short-circuit row variants */
+.trace-summary-sc        { font-size: 12px; }
+.trace-summary-sc--none  { background: #fafbfc; color: var(--color-text-muted); font-style: italic; }
+.trace-summary-sc--match { background: #f0fdf4; }
+
+.summary-row-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.trace-summary-full .summary-row-label  { background: #e2e8f0; color: #475569; }
+.trace-summary-sc--match .summary-row-label { background: #bbf7d0; color: #065f46; }
+.trace-summary-sc--none  .summary-row-label { background: #f1f5f9; color: #94a3b8; }
+
+.sc-cost  { font-weight: 600; color: var(--color-text); font-family: 'SF Mono', monospace; }
+.sc-saved { color: var(--color-success); font-weight: 600; }
+.sc-note  { color: var(--color-text-muted); font-style: italic; }

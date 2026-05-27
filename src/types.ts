@@ -24,4 +24,6 @@ export interface Override {
   pattern: OverridePattern;
   destination: string;      // valid URL with protocol — the reroute target
   createdAt: number;
+  matcherHash: string;      // djb2 hash of normalized pattern summary → DynamoDB sort key
+  hasWildcards: boolean;    // true if any segment is a wildcard; drives evaluation path
 }

@@ -1,6 +1,7 @@
 import type { FoundLink, Override, UrlSegment } from '../types';
 import { analyzeUrl, buildPatternSummary } from '../urlAnalyzer';
 import { saveOverride } from '../storage';
+import { computeMatcherHash } from '../hashUtils';
 
 type OnSaveCallback = (override: Override) => void;
 
@@ -187,15 +188,18 @@ function handleSave(
 
   if (!valid) return;
 
+  const patternSummary = buildPatternSummary(link.rawUrl, segments);
   const override: Override = {
     id: `override-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     sourceUrl: link.rawUrl,
     pattern: {
       segments,
-      summary: buildPatternSummary(link.rawUrl, segments),
+      summary: patternSummary,
     },
     destination,
     createdAt: Date.now(),
+    matcherHash: computeMatcherHash(patternSummary),
+    hasWildcards: segments.some(s => s.isWildcard),
   };
 
   saveOverride(override);
