@@ -1,12 +1,10 @@
 import './style.css';
 import type { FoundLink } from './types';
 import { parseHtml, parseText } from './linkParser';
-import { renderHomePage, refreshOverridesPanel } from './pages/homePage';
-import { renderSelectedPage } from './pages/selectedPage';
+import { renderHomePage } from './pages/homePage';
 
 // ─── App State ──────────────────────────────────────────────────────────────────
 let allLinks: FoundLink[] = [];
-let selectedLinks: FoundLink[] = [];
 
 // ─── Bootstrap ─────────────────────────────────────────────────────────────────
 async function boot(): Promise<void> {
@@ -49,26 +47,8 @@ async function boot(): Promise<void> {
 // ─── Navigation ─────────────────────────────────────────────────────────────────
 function goHome(): void {
   const app = document.getElementById('app')!;
-  renderHomePage(app, allLinks, (selected) => {
-    selectedLinks = selected;
-    goSelected();
-  });
+  renderHomePage(app, allLinks);
 }
-
-function goSelected(): void {
-  const app = document.getElementById('app')!;
-  renderSelectedPage(app, selectedLinks, goHome, (_override) => {
-    // After an override is saved, refresh the overrides panel if we ever go back home.
-    // We also want the home page (when re-rendered) to pick it up from localStorage automatically.
-    // For now just schedule a refresh if the user goes back.
-    // The refreshOverridesPanel is exported for use on the home page after navigation back.
-    void _override;
-  });
-}
-
-// Expose refresh for the selected page's onSave callback to work with home page panel
-// (home page will re-render from scratch on back navigation, so localStorage is always fresh)
-export { refreshOverridesPanel };
 
 // ─── Go ────────────────────────────────────────────────────────────────────────
 boot();

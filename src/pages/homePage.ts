@@ -2,16 +2,14 @@ import type { FoundLink } from '../types';
 import { getOverrides, deleteOverride } from '../storage';
 import { evaluateWithTrace } from '../patternMatcher';
 import type { EvalTrace, OverrideEvalResult } from '../patternMatcher';
-
-type NavigateToSelected = (selected: FoundLink[]) => void;
+import { openOverrideModal } from '../components/overrideModal';
 
 export function renderHomePage(
   container: HTMLElement,
   allLinks: FoundLink[],
-  navigateToSelected: NavigateToSelected,
 ): void {
   container.innerHTML = buildHomeHtml(allLinks);
-  wireHomePage(container, allLinks, navigateToSelected);
+  wireHomePage(container, allLinks);
 }
 
 // Re-render only the overrides panel (called after saving a new override)
@@ -21,31 +19,71 @@ export function refreshOverridesPanel(container: HTMLElement): void {
   wireDeleteButtons(container);
 }
 
+// Re-render the tester section's enabled/disabled state (called after saving a new override)
+export function refreshTesterSection(container: HTMLElement): void {
+  const section = container.querySelector('#section-tester');
+  if (section) section.outerHTML = buildTesterSectionHtml();
+  wireTesterSection(container);
+}
+
 // ─── Build HTML ────────────────────────────────────────────────────────────────
+
+function buildTesterSectionHtml(): string {
+  const hasOverrides = getOverrides().length > 0;
+
+  if (!hasOverrides) {
+    return `
+      <section class="card" id="section-tester">
+        <div class="card-header">
+          <h2>Test URL Matcher</h2>
+        </div>
+        <p class="section-hint">
+          You don't have any overrides yet. <strong>Create an override</strong> in the Found Links
+          table below before you can test URLs against it.
+        </p>
+        <div class="tester-form">
+          <input
+            type="text"
+            id="test-url-input"
+            class="test-url-input"
+            placeholder="Create an override first"
+            autocomplete="off"
+            spellcheck="false"
+            disabled
+          />
+          <button class="btn btn-primary" id="btn-test" disabled>Test</button>
+        </div>
+        <div id="tester-results"></div>
+      </section>`;
+  }
+
+  return `
+    <section class="card" id="section-tester">
+      <div class="card-header">
+        <h2>Test URL Matcher</h2>
+      </div>
+      <p class="section-hint">Enter a URL to see which saved overrides would match it.</p>
+      <div class="tester-form">
+        <input
+          type="text"
+          id="test-url-input"
+          class="test-url-input"
+          placeholder="https://www.example.com/search?q=boots"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="btn btn-primary" id="btn-test">Test</button>
+      </div>
+      <div id="tester-results"></div>
+    </section>`;
+}
 
 function buildHomeHtml(allLinks: FoundLink[]): string {
   return `
     <div class="page-home">
 
       <!-- ── URL Tester ── -->
-      <section class="card" id="section-tester">
-        <div class="card-header">
-          <h2>Test URL Matcher</h2>
-        </div>
-        <p class="section-hint">Enter a URL to see which saved overrides would match it.</p>
-        <div class="tester-form">
-          <input
-            type="text"
-            id="test-url-input"
-            class="test-url-input"
-            placeholder="https://www.example.com/search?q=boots"
-            autocomplete="off"
-            spellcheck="false"
-          />
-          <button class="btn btn-primary" id="btn-test">Test</button>
-        </div>
-        <div id="tester-results"></div>
-      </section>
+      ${buildTesterSectionHtml()}
 
       <!-- ── Saved Overrides ── -->
       <section class="card" id="section-overrides">
@@ -60,31 +98,26 @@ function buildHomeHtml(allLinks: FoundLink[]): string {
       <!-- ── Found Links ── -->
       <section class="card" id="section-links">
         <div class="card-header">
-          <h2>Found Links</h2>
-          <span class="badge-count" id="selection-count">0 selected</span>
-          <button class="btn btn-primary btn-create-overrides" id="btn-next" disabled>
-            Create Overrides <span id="next-count"></span>
-          </button>
+          <h2>Links Identified From Sample Content</h2>
         </div>
         <p class="section-hint">
-          Links scanned from
+          These are the links found in
           <a href="${import.meta.env.BASE_URL}samples/sample.html" target="_blank" rel="noopener">sample.html</a>
           and
           <a href="${import.meta.env.BASE_URL}samples/sample.txt" target="_blank" rel="noopener">sample.txt</a>.
-          Select one or more, then click <strong>Create Overrides</strong>.
+          An <strong>override</strong> redirects requests matching a link's pattern to a different destination URL.
+          Click <strong>Create Override</strong> on any row below to set one up for that link.
         </p>
 
         <div class="table-wrapper">
           <table class="links-table" id="links-table">
             <thead>
               <tr>
-                <th class="col-check">
-                  <input type="checkbox" id="select-all" title="Select all" />
-                </th>
                 <th>URL</th>
                 <th>Display Text</th>
                 <th>Source</th>
                 <th>Type</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -115,20 +148,22 @@ function buildLinkRow(link: FoundLink): string {
 
   return `
     <tr data-link-id="${link.id}">
-      <td class="col-check">
-        <input type="checkbox" class="row-check" data-link-id="${link.id}" />
-      </td>
       <td class="url-cell"><code class="url-code" title="${esc(link.rawUrl)}">${esc(link.rawUrl)}</code></td>
       <td class="text-cell">${link.displayText ? esc(link.displayText) : '<span class="muted">—</span>'}</td>
       <td><span class="badge badge-${link.sourceFile}">${sourceLabel}</span></td>
       <td>${typeBadge}</td>
+      <td>
+        <button class="btn btn-sm btn-create-override" data-link-id="${link.id}">
+          Create Override
+        </button>
+      </td>
     </tr>`;
 }
 
 function buildOverridesPanelContent(): string {
   const overrides = getOverrides();
   if (overrides.length === 0) {
-    return `<p class="empty-state">No overrides saved yet. Select links above and create overrides.</p>`;
+    return `<p class="empty-state">No overrides saved yet. Click <strong>Create Override</strong> next to a link below to add one.</p>`;
   }
 
   const rows = overrides.map(o => `
@@ -319,52 +354,34 @@ function buildShortCircuitRow(trace: EvalTrace): string {
 function wireHomePage(
   container: HTMLElement,
   allLinks: FoundLink[],
-  navigateToSelected: NavigateToSelected,
 ): void {
-  const btnNext = container.querySelector<HTMLButtonElement>('#btn-next')!;
-  const nextCount = container.querySelector<HTMLElement>('#next-count')!;
-  const selectionCount = container.querySelector<HTMLElement>('#selection-count')!;
-  const selectAll = container.querySelector<HTMLInputElement>('#select-all')!;
+  // Create Override buttons
+  container.querySelectorAll<HTMLButtonElement>('.btn-create-override').forEach(btn => {
+    const linkId = btn.getAttribute('data-link-id');
+    const link = allLinks.find(l => l.id === linkId);
+    if (!link) return;
 
-  function updateSelectionState(): void {
-    const checked = container.querySelectorAll<HTMLInputElement>('.row-check:checked');
-    const n = checked.length;
-    btnNext.disabled = n === 0;
-    nextCount.textContent = n > 0 ? `(${n})` : '';
-    selectionCount.textContent = `${n} selected`;
-    // Update select-all indeterminate state
-    const total = allLinks.length;
-    selectAll.checked = n === total;
-    selectAll.indeterminate = n > 0 && n < total;
-  }
-
-  // Row checkboxes
-  container.querySelectorAll<HTMLInputElement>('.row-check').forEach(chk => {
-    chk.addEventListener('change', updateSelectionState);
-  });
-
-  // Select-all
-  selectAll.addEventListener('change', () => {
-    container.querySelectorAll<HTMLInputElement>('.row-check').forEach(chk => {
-      chk.checked = selectAll.checked;
+    btn.addEventListener('click', () => {
+      openOverrideModal(link, () => {
+        refreshOverridesPanel(container);
+        refreshTesterSection(container);
+        const row = container.querySelector(`tr[data-link-id="${link.id}"]`);
+        row?.classList.add('has-override');
+        btn.textContent = '✓ Override Saved';
+        btn.disabled = true;
+        btn.classList.add('btn-success');
+      });
     });
-    updateSelectionState();
-  });
-
-  // Next button
-  btnNext.addEventListener('click', () => {
-    const checkedIds = new Set(
-      [...container.querySelectorAll<HTMLInputElement>('.row-check:checked')]
-        .map(el => el.getAttribute('data-link-id')!),
-    );
-    const selected = allLinks.filter(l => checkedIds.has(l.id));
-    navigateToSelected(selected);
   });
 
   // Delete override buttons
   wireDeleteButtons(container);
 
   // URL Tester
+  wireTesterSection(container);
+}
+
+function wireTesterSection(container: HTMLElement): void {
   const testInput = container.querySelector<HTMLInputElement>('#test-url-input')!;
   const btnTest = container.querySelector<HTMLButtonElement>('#btn-test')!;
   const testerResults = container.querySelector<HTMLElement>('#tester-results')!;
@@ -392,6 +409,7 @@ function wireDeleteButtons(container: HTMLElement): void {
       if (!confirm('Delete this override?')) return;
       deleteOverride(id);
       refreshOverridesPanel(container);
+      refreshTesterSection(container);
     });
   });
 }

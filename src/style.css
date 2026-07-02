@@ -88,7 +88,6 @@ body { min-height: 100vh; }
   margin-bottom: 8px;
 }
 .card-header h2 { font-size: 16px; font-weight: 600; }
-.btn-create-overrides { margin-left: auto; }
 
 h2 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
 h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
@@ -120,7 +119,6 @@ tr:last-child td { border-bottom: none; }
 tr:hover td { background: #fafbfc; }
 tr.has-override td { background: var(--color-success-bg); }
 
-.col-check { width: 40px; }
 .url-cell { max-width: 340px; }
 .url-code {
   display: block;
@@ -225,15 +223,6 @@ input[type="text"]:disabled, input[type="url"]:disabled {
 .tester-msg.no-match { color: var(--color-text-muted); }
 .match-table { margin-top: 6px; }
 
-/* ── Selected Page ───────────────────────────────────────────────────────── */
-.page-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.selection-count { color: var(--color-text-muted); font-size: 13px; }
-
 /* ── Modal ───────────────────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
@@ -312,6 +301,22 @@ input[type="text"]:disabled, input[type="url"]:disabled {
   font-size: 13px;
   color: #7c5700;
 }
+
+.help-box {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text);
+  margin-bottom: 12px;
+}
+.help-box code { font-size: 12px; background: rgba(0,0,0,.05); padding: 1px 4px; border-radius: 3px; }
+.help-box--intro { margin: 0; }
+.help-list { margin: 8px 0 0; padding-left: 20px; }
+.help-list li { margin-bottom: 6px; }
+.help-list li:last-child { margin-bottom: 0; }
 
 .modal-section h3 { font-size: 14px; font-weight: 600; color: var(--color-text); margin-bottom: 4px; }
 .modal-section .section-hint { margin-bottom: 12px; }

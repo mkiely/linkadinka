@@ -91,20 +91,47 @@ function buildModalHtml(link: FoundLink, segments: UrlSegment[]): string {
   }).join('');
 
   const patternBody = !hasSegments
-    ? `<p class="no-segments">This URL has no dynamic parts — the pattern will match this URL exactly.</p>`
-    : `<table class="seg-table">
+    ? `<p class="no-segments">
+        This URL has no dynamic parts — no <code>{{handlebars}}</code> placeholders and no query
+        parameters were found in it. That means there's nothing to toggle below: this override
+        will only ever match requests for this exact URL, character for character.
+      </p>`
+    : `<div class="help-box">
+        <strong>How matching works:</strong> each row below is one dynamic part of the URL — either
+        a <code>{{handlebars}}</code> placeholder or a <code>?param=</code> query parameter. For every
+        row, you choose one of two things:
+        <ul class="help-list">
+          <li>
+            <strong>Exact match</strong> (Wildcard left unchecked) — type the value that must appear
+            in that spot. A request only matches the override if that part of its URL is <em>identical</em>
+            to the value you type.
+          </li>
+          <li>
+            <strong>Wildcard</strong> (Wildcard checked) — that part of the URL can be
+            <em>anything at all</em>. Any request will still match the override no matter what value
+            appears in that spot.
+          </li>
+        </ul>
+        Any part of the URL not listed in the table (the domain and static path segments) is always
+        matched exactly — those never change.
+      </div>
+      <table class="seg-table">
         <thead>
           <tr>
             <th>Segment</th>
             <th>Match Value</th>
-            <th>Wildcard?</th>
+            <th title="Check to let this part of the URL be anything">Wildcard?</th>
           </tr>
         </thead>
         <tbody>${segmentRows}</tbody>
       </table>`;
 
   const fullHbsNote = isFullHbs
-    ? `<p class="hbs-note">⚡ This link's entire URL is a template variable. You can match any URL or specify an exact value below.</p>`
+    ? `<p class="hbs-note">
+        ⚡ This link's entire URL is a template variable, so there's no fixed URL to match against.
+        Below you can either make it a wildcard (match <em>any</em> URL) or type one specific URL it
+        must equal exactly.
+      </p>`
     : '';
 
   return `
@@ -115,6 +142,13 @@ function buildModalHtml(link: FoundLink, segments: UrlSegment[]): string {
       </div>
 
       <div class="modal-body">
+        <p class="help-box help-box--intro">
+          An <strong>override</strong> is a rule: whenever a request's URL matches the pattern you
+          define below, linkaDinka redirects it to the destination URL you choose instead. You're
+          creating one override for the link shown here — first you'll decide how strictly its URL
+          must match (step 1), then where matching requests should be sent (step 2).
+        </p>
+
         <div class="source-url-block">
           <span class="label">Source URL</span>
           <code class="source-url">${esc(link.rawUrl)}</code>
@@ -123,14 +157,18 @@ function buildModalHtml(link: FoundLink, segments: UrlSegment[]): string {
         ${fullHbsNote}
 
         <section class="modal-section">
-          <h3>Matching Pattern</h3>
+          <h3>1. Matching Pattern</h3>
           <p class="section-hint">Set which parts of the URL must match exactly, and which can be anything (wildcard).</p>
           ${patternBody}
         </section>
 
         <section class="modal-section">
-          <h3>Override Destination</h3>
-          <p class="section-hint">The URL to route matching requests to. Must include protocol (http:// or https://).</p>
+          <h3>2. Override Destination</h3>
+          <p class="section-hint">
+            The URL that matching requests get redirected to. It must include a protocol
+            (<code>http://</code> or <code>https://</code>) and can point anywhere — a different
+            page, a different domain, whatever you need matching requests to land on.
+          </p>
           <input
             type="url"
             class="destination-input"
